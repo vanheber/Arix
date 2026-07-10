@@ -13,7 +13,7 @@
           "location" : "https://github.com/rive-app/rive-ios",
           "name" : "RiveRuntime"
         },
-        "path" : "/Users/ricardoalbuquerque/Git/Pynkaro/.build/artifacts/rive-ios/RiveRuntime/RiveRuntime.xcframework",
+        "path" : "/Volumes/Arquivos/projetos-git/Arix/.build/artifacts/rive-ios/RiveRuntime/RiveRuntime.xcframework",
         "source" : {
           "checksum" : "a44ceea0b094d22a9e16fdb94ea463411685e5a697a45d14d5d73438430ef4f8",
           "type" : "remote",

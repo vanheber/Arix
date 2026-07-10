@@ -1,4 +1,5 @@
 {
-  "anthropic_api_key": "<CHAVE_API_ANTHROPIC>",
-  "elevenlabs_api_key": "<CHAVE_API_ELEVENLABS>"
+  "grok_api_key": "<CHAVE_API_GROK>",
+  "gemini_api_key": "<CHAVE_API_GEMINI>",
+  "arix_elevenlabs_api_key": "<CHAVE_API_ELEVENLABS>"
 }

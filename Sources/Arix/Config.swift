@@ -5,27 +5,33 @@ import Foundation
 ///
 /// Ordem de busca do arquivo:
 ///   1. config.json no diretório atual (raiz do projeto)
-///   2. ~/.config/pynkaro/config.json
+///   2. ~/.config/arix/config.json
 ///
-/// Variáveis de ambiente (ANTHROPIC_API_KEY, ELEVENLABS_API_KEY) ainda
-/// funcionam como fallback se o arquivo não existir ou o campo estiver vazio.
+/// Variáveis de ambiente ainda funcionam como fallback se o arquivo
+/// não existir ou o campo estiver vazio.
 struct Config: Decodable {
-    var anthropicApiKey: String?
-    var elevenLabsApiKey: String?
+    var grokApiKey: String?
+    var geminiApiKey: String?
+    var arixElevenlabsApiKey: String?
 
     enum CodingKeys: String, CodingKey {
-        case anthropicApiKey = "anthropic_api_key"
-        case elevenLabsApiKey = "elevenlabs_api_key"
+        case grokApiKey = "grok_api_key"
+        case geminiApiKey = "gemini_api_key"
+        case arixElevenlabsApiKey = "arix_elevenlabs_api_key"
     }
 
     static let shared = load()
 
-    static var anthropicKey: String? {
-        resolve(shared.anthropicApiKey, envVar: "ANTHROPIC_API_KEY")
+    static var grokKey: String? {
+        resolve(shared.grokApiKey, envVar: "GROK_API_KEY")
+    }
+
+    static var geminiKey: String? {
+        resolve(shared.geminiApiKey, envVar: "GEMINI_API_KEY")
     }
 
     static var elevenLabsKey: String? {
-        resolve(shared.elevenLabsApiKey, envVar: "ELEVENLABS_API_KEY")
+        resolve(shared.arixElevenlabsApiKey, envVar: "ARIX_ELEVENLABS_API_KEY")
     }
 
     private static func resolve(_ fileValue: String?, envVar: String) -> String? {
@@ -42,7 +48,7 @@ struct Config: Decodable {
         let fm = FileManager.default
         let candidates = [
             URL(fileURLWithPath: fm.currentDirectoryPath).appendingPathComponent("config.json"),
-            fm.homeDirectoryForCurrentUser.appendingPathComponent(".config/pynkaro/config.json")
+            fm.homeDirectoryForCurrentUser.appendingPathComponent(".config/arix/config.json")
         ]
         for url in candidates where fm.fileExists(atPath: url.path) {
             do {
@@ -54,6 +60,6 @@ struct Config: Decodable {
                 print("⚠️ Não consegui ler \(url.path): \(error.localizedDescription)")
             }
         }
-        return Config(anthropicApiKey: nil, elevenLabsApiKey: nil)
+        return Config(grokApiKey: nil, geminiApiKey: nil, arixElevenlabsApiKey: nil)
     }
 }

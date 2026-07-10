@@ -1,19 +1,19 @@
 #!/bin/bash
-# Monta o Pynkaro.app a partir do build do Swift Package.
+# Monta o Arix.app a partir do build do Swift Package.
 set -e
 cd "$(dirname "$0")"
 
 echo "🔨 Compilando (release)..."
 swift build -c release
 
-APP="Pynkaro.app"
-BIN=".build/release/Pynkaro"
+APP="Arix.app"
+BIN=".build/release/Arix"
 
 echo "📦 Montando $APP..."
 rm -rf "$APP"
 mkdir -p "$APP/Contents/MacOS" "$APP/Contents/Resources"
 
-cp "$BIN" "$APP/Contents/MacOS/Pynkaro"
+cp "$BIN" "$APP/Contents/MacOS/Arix"
 cp Info.plist "$APP/Contents/Info.plist"
 printf 'APPL????' > "$APP/Contents/PkgInfo"
 
@@ -32,7 +32,7 @@ if [ -n "$FRAMEWORK" ]; then
     echo "🧩 Incluindo $(basename "$FRAMEWORK") ($FRAMEWORK)"
     mkdir -p "$APP/Contents/Frameworks"
     cp -R "$FRAMEWORK" "$APP/Contents/Frameworks/"
-    install_name_tool -add_rpath "@executable_path/../Frameworks" "$APP/Contents/MacOS/Pynkaro" 2>/dev/null || true
+    install_name_tool -add_rpath "@executable_path/../Frameworks" "$APP/Contents/MacOS/Arix" 2>/dev/null || true
     codesign --force --sign - "$APP/Contents/Frameworks/RiveRuntime.framework" 2>/dev/null || true
 else
     echo "ℹ️ RiveRuntime.framework não encontrado no .build (ok se o link for estático)."
@@ -43,6 +43,6 @@ codesign --force --deep --sign - "$APP"
 
 echo ""
 echo "✅ $APP criado."
-echo "   As chaves de API devem estar em ~/.config/pynkaro/config.json"
-echo "   (copie com: mkdir -p ~/.config/pynkaro && cp config.json ~/.config/pynkaro/)"
-echo "   Para instalar: mv Pynkaro.app /Applications/"
+echo "   As chaves de API devem estar em ~/.config/arix/config.json"
+echo "   (copie com: mkdir -p ~/.config/arix && cp config.json ~/.config/arix/)"
+echo "   Para instalar: mv Arix.app /Applications/"

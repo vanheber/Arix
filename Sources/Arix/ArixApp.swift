@@ -5,7 +5,7 @@ import Combine
 /// App de menu bar. A UI do status item é feita com NSStatusItem (AppKit),
 /// mais confiável que o MenuBarExtra do SwiftUI no macOS 13.
 @main
-struct PynkaroApp: App {
+struct ArixApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
 
     var body: some Scene {
@@ -27,7 +27,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationDidFinishLaunching(_ notification: Notification) {
         // Sem ícone no Dock; o app vive na menu bar.
         NSApp.setActivationPolicy(.accessory)
-        print("🤖 Pynkaro — assistente de voz local para macOS")
+        print("🤖 Arix — assistente de voz local para macOS")
 
         buildStatusItem()
 
@@ -51,7 +51,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         let item = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
         item.button?.image = NSImage(
             systemSymbolName: AssistantStatus.starting.symbolName,
-            accessibilityDescription: "Pynkaro"
+            accessibilityDescription: "Arix"
         )
 
         let menu = NSMenu()
@@ -91,7 +91,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
         menu.addItem(.separator())
 
-        let quitItem = NSMenuItem(title: "Sair do Pynkaro",
+        let quitItem = NSMenuItem(title: "Sair do Arix",
                                   action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q")
         quitItem.target = NSApp
         menu.addItem(quitItem)
@@ -133,7 +133,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 // MARK: - Janela dos sugestores de notícias
 
 /// Substitui a antiga entrada via stdin: os nomes ficam em UserDefaults
-/// e o ClaudeClient os lê a cada pergunta.
+/// e o LLMClient os lê a cada pergunta.
 struct SuggestersView: View {
     @AppStorage("newsSuggester1") private var name1 = ""
     @AppStorage("newsSuggester2") private var name2 = ""

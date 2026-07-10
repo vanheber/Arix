@@ -1,119 +1,105 @@
-# Pynkaro — assistente de voz local para macOS
+# Arix — assistente de voz local para macOS
 
-Protótipo de linha de comando. Fica ouvindo o microfone; ao ouvir **"Píncaro"**, captura a pergunta, transcreve localmente, envia para o Claude via API e fala a resposta.
+Assistente de voz nativo para macOS (Apple Silicon M4). Escuta o microfone continuamente; ao ouvir **"Arix"**, captura a pergunta, transcreve localmente, envia para Grok (xAI) ou Gemini (Google) via API e fala a resposta com lip sync animado.
 
 ## Privacidade
 
-- Wake word e transcrição: **Speech framework da Apple, on-device** (nenhum áudio sai do Mac, se o idioma pt-BR estiver baixado — veja abaixo).
-- Voz: **AVSpeechSynthesizer**, local.
-- Único tráfego de rede: o **texto** da pergunta para `api.anthropic.com`.
+- Wake word e transcrição: **Speech framework da Apple, on-device** (nenhum áudio sai do Mac, se o idioma pt-BR estiver baixado).
+- Voz: **ElevenLabs** (voz neural) ou **AVSpeechSynthesizer** local como fallback.
+- Único tráfego de rede: o **texto** da pergunta para a API de LLM escolhida (Grok ou Gemini).
 
 ## Requisitos
 
-- macOS 13+ (Apple Silicon recomendado), Xcode ou Command Line Tools instalados.
-- Chave de API da Anthropic (https://console.anthropic.com).
-- Para transcrição 100% local: em **Ajustes do Sistema > Teclado > Ditado**, ative o ditado e baixe o idioma Português (Brasil). O app avisa no início se o modo on-device está ativo.
+- macOS 13+ (Apple Silicon M4 recomendado), Command Line Tools instalados.
+- Chave de API do Grok (https://console.x.ai) ou Gemini (https://aistudio.google.com).
+- Para transcrição 100% local: em **Ajustes do Sistema > Teclado > Ditado**, ative o ditado e baixe o idioma Português (Brasil).
 
 ## Como rodar
 
-1. Copie `config.example.json` para `config.json` e preencha as chaves (o arquivo está no `.gitignore`, não vai em commits):
+1. Copie `config.example.json` para `config.json` e preencha as chaves:
 
 ```json
 {
-  "anthropic_api_key": "sk-ant-...",
-  "elevenlabs_api_key": "..."
+  "grok_api_key": "xai-...",
+  "gemini_api_key": "...",
+  "arix_elevenlabs_api_key": "..."
 }
 ```
 
-2. Compile e rode (desenvolvimento):
+2. Compile e rode:
 
 ```bash
-cd ~/Git/Pynkaro
 swift run -c release
 ```
 
 3. Ou monte o aplicativo de verdade (menu bar, sem terminal):
 
 ```bash
-./make_app.sh                                  # gera Pynkaro.app
-mkdir -p ~/.config/pynkaro && cp config.json ~/.config/pynkaro/
-mv Pynkaro.app /Applications/                  # opcional
+./make_app.sh                               # gera Arix.app
+mkdir -p ~/.config/arix && cp config.json ~/.config/arix/
+mv Arix.app /Applications/                  # opcional
 ```
 
-O app vive na **menu bar** (sem ícone no Dock): o ícone muda com o estado (ouvindo/pensando/falando), e o menu permite pausar/retomar a escuta, definir os sugestores de notícias e sair. Rodando como .app, o config.json é lido de `~/.config/pynkaro/` e o avatar vem embutido no bundle.
-
-O `config.json` é procurado no diretório atual e depois em `~/.config/pynkaro/config.json`. As variáveis de ambiente `ANTHROPIC_API_KEY`/`ELEVENLABS_API_KEY` seguem funcionando como fallback para campos vazios.
-
-Na primeira execução o macOS pedirá permissão de **Microfone** e **Reconhecimento de Fala** para o Terminal. Se os diálogos não aparecerem, habilite manualmente em Ajustes do Sistema > Privacidade e Segurança.
+O app vive na **menu bar** (sem ícone no Dock). O `config.json` é lido de `~/.config/arix/`. Variáveis de ambiente `GROK_API_KEY`/`GEMINI_API_KEY`/`ARIX_ELEVENLABS_API_KEY` são fallback.
 
 ## Uso
 
-1. Aguarde `👂 Aguardando "Píncaro"...`
-2. Diga: **"Píncaro, que horas são em Tóquio?"** (ou diga só "Píncaro", aguarde o `🎤 Pode falar...` no terminal, e pergunte)
-3. Ele transcreve, consulta o Claude e responde em voz alta.
-4. O histórico da conversa é mantido durante a sessão.
+1. Aguarde `👂 Aguardando "arix"...`
+2. Diga: **"Arix, que horas são em Tóquio?"**
+3. Ele transcreve, consulta o LLM e responde em voz alta com lip sync.
 
 ## Configuração
 
-Chaves de API: no `config.json` (ver "Como rodar"). Demais ajustes, por variável de ambiente:
-
 | Variável | Padrão | Descrição |
 |---|---|---|
-| `PYNKARO_MODEL` | `claude-sonnet-5` | modelo da API Anthropic |
-| `PYNKARO_VOICE` | melhor voz masculina pt-BR instalada | nome da voz do sistema (ex.: `Felipe (Aprimorada)`) |
-| `ELEVENLABS_VOICE_ID` | `9yzdeviXkFddZ4Oz8Mok` (Lutz, masculina, risonha) | voz da ElevenLabs — a Lutz vem da Voice Library: adicione-a em My Voices na sua conta antes de usar |
-| `ELEVENLABS_MODEL` | `eleven_multilingual_v2` | use `eleven_flash_v2_5` para menor latência |
-| `PYNKARO_WEB_SEARCH` | `1` (ligada) | `0` desativa a busca na web |
-| `PYNKARO_WAKE_WORD` | `pincaro` | wake word (sem precisar recompilar; acentos e maiúsculas são ignorados) |
+| `ARIX_MODEL` | `grok-2-1212` ou `gemini-1.5-flash` | modelo da API |
+| `ARIX_VOICE` | melhor voz masculina pt-BR | nome da voz do sistema |
+| `ARIX_ELEVENLABS_VOICE_ID` | `f016iUUEKqhX0trYHH6Q` | voz da ElevenLabs |
+| `ARIX_ELEVENLABS_MODEL` | `eleven_multilingual_v2` | modelo ElevenLabs |
+| `ARIX_WEB_SEARCH` | `1` | `0` desativa a busca na web |
+| `ARIX_WAKE_WORD` | `arix` | wake word (sem recompilar) |
+| `ARIX_RIVE_INPUT` | `mouth` | input numérico do state machine Rive |
+| `ARIX_RIVE_STATE_MACHINE` | `State Machine 1` | state machine do Rive |
 
 ### Avatar na tela
 
-Salve a imagem do assistente como `avatar.png` na raiz do projeto (ou em `~/.config/pynkaro/avatar.png`) — PNG com fundo transparente fica melhor. O avatar aparece com fade no canto inferior direito quando a wake word é detectada e some quando a resposta termina. A janela flutua acima das outras, não rouba o foco e deixa os cliques passarem. Sem o arquivo, o app apenas avisa e segue sem avatar.
+Salve `avatar.png` na raiz do projeto (ou `~/.config/arix/avatar.png`) — PNG com fundo transparente. O avatar aparece com fade no canto inferior direito ao detectar a wake word.
 
-**Boca animada (lip sync por visemas):** com a voz da ElevenLabs, o app usa o endpoint `with-timestamps`, que devolve o áudio junto com o instante exato de cada caractere. As letras viram formatos de boca sincronizados: a → aberta, e/i e consoantes → entreaberta, o/u → arredondada, m/b/p → fechada, f/v → lábio-dental; pausas fecham a boca. Sprites, na mesma pasta e dimensões do avatar.png: `avatar_mid.png` (entreaberta) e `avatar_open.png` (aberta) são os essenciais; `avatar_round.png` (o/u) e `avatar_fv.png` (f/v) são opcionais — sem eles, o app usa o sprite mais próximo. Se a resposta vier sem timestamps, cai automaticamente no modo por amplitude (volume); com a voz do sistema, a boca segue o ritmo das palavras. Sem sprites extras, o avatar fica estático (sem erro). Dica: gere as variações com um editor de imagens por IA pedindo "mesma imagem, apenas boca X".
+**Design dos assets:** Revestimento estrutural em Nankin Gray, contornos metálicos em Antique Bronze, e núcleo de emissão/lip-sync (visemas) em Deep Monarch Blue. Fundo estritamente transparente.
 
-### Avatar com rig 2D (Rive)
+**Boca animada (lip sync):** Com ElevenLabs, usa timestamps de caracteres para visemas sincronizados. Sprites opcionais: `avatar_mid.png`, `avatar_open.png`, `avatar_round.png`, `avatar_fv.png`. Alternativamente, um rig Rive (`avatar.riv`) substitui os PNGs.
 
-Alternativa aos sprites: um rig animado feito no [editor da Rive](https://rive.app). Se existir `avatar.riv` na raiz do projeto (ou `~/.config/pynkaro/`), ele é usado no lugar dos PNGs. O app envia o nível de boca (0 a 4) a um input numérico do state machine — animações de idle (piscar, respirar) rodam por conta do próprio rig.
+### LLM: Grok (xAI) e Gemini (Google)
 
-Contrato esperado no arquivo .riv (nomes configuráveis por env):
-
-| Elemento | Nome padrão | Env var |
-|---|---|---|
-| State machine | `State Machine 1` | `PYNKARO_RIVE_STATE_MACHINE` |
-| Input numérico da boca | `mouth` (0=fechada, 1=entreaberta, 2=aberta, 3=o/u, 4=f/v) | `PYNKARO_RIVE_INPUT` |
+O provedor é escolhido automaticamente: se `GROK_API_KEY` estiver definida, usa Grok (endpoint `https://api.x.ai/v1/chat/completions`); senão, se `GEMINI_API_KEY` estiver definida, usa Gemini (endpoint `https://generativelanguage.googleapis.com`). O histórico da conversa é mantido durante a sessão (máx. 20 mensagens).
 
 ### Busca na web
 
-O app habilita a ferramenta de busca da própria API da Anthropic (`web_search`): o Claude decide quando pesquisar e responde com dados atuais (notícias, cotações, clima etc.). A busca roda nos servidores da Anthropic — nada muda no app. Custo: US$ 10 por 1.000 buscas, além dos tokens; limitado a 3 buscas por pergunta (`max_uses`). Perguntas que exigem busca demoram alguns segundos a mais.
+Controlada por `ARIX_WEB_SEARCH=0`. Quando habilitada, o LLM pode pesquisar informações atuais. O suporte varia por provedor.
 
 ### Voz ElevenLabs
 
-Com `ELEVENLABS_API_KEY` definida, a resposta é sintetizada na nuvem da ElevenLabs (voz neural, muito mais natural). Apenas o **texto** da resposta é enviado; o áudio do microfone continua nunca saindo do Mac. Se a API falhar, o app usa a voz do sistema como fallback.
-
-Para escolher outra voz, veja as suas em https://elevenlabs.io/app/voice-lab ou liste via API:
-
-```bash
-curl -s https://api.elevenlabs.io/v1/voices -H "xi-api-key: $ELEVENLABS_API_KEY" | python3 -c "import json,sys; [print(v['voice_id'], '-', v['name']) for v in json.load(sys.stdin)['voices']]"
-```
-
-Ajustes no código: wake word em `VoiceAssistant.swift` (`wakeWord`), tempo de silêncio para encerrar a pergunta (`armSilenceTimer`, 1,8 s), prompt de sistema em `ClaudeClient.swift`.
+Com `ARIX_ELEVENLABS_API_KEY` definida, a resposta é sintetizada na ElevenLabs (voz neural). Fallback para voz do sistema em caso de falha.
 
 ## Arquitetura
 
 ```
-main.swift            → entrada, run loop
-VoiceAssistant.swift  → máquina de estados (aguardando → capturando → pensando → falando)
-SpeechRecognizer.swift→ AVAudioEngine + SFSpeechRecognizer (pt-BR, on-device)
-ClaudeClient.swift    → Messages API da Anthropic, com histórico
-Speaker.swift         → AVSpeechSynthesizer (voz pt-BR)
+ArixApp.swift            → entrada (SwiftUI @main), menu bar
+VoiceAssistant.swift     → máquina de estados (aguardando → capturando → pensando → falando)
+SpeechRecognizer.swift   → AVAudioEngine + SFSpeechRecognizer (pt-BR, on-device)
+LLMClient.swift          → API Grok ou Gemini, com histórico
+Speaker.swift            → AVSpeechSynthesizer (voz pt-BR)
+ElevenLabsSpeaker.swift  → API ElevenLabs com visemas por timestamps
+AvatarWindow.swift       → janela flutuante com avatar (Rive ou sprites PNG)
+AssistantController.swift→ ponte VoiceAssistant → SwiftUI
+Config.swift             → carregamento de chaves (config.json + env vars)
 ```
 
-Detalhes de implementação: a sessão de reconhecimento é reiniciada a cada 45 s (limite de ~1 min do SFSpeechRecognizer); o fim da pergunta é detectado por silêncio (sem nova transcrição por 1,8 s); a escuta é pausada enquanto o assistente fala, para não ouvir a si mesmo.
+## Análise Crítica e Roadmap de Evolução (Arix)
 
-## Limitações do protótipo / próximos passos
+Este projeto foi refatorado para operar na arquitetura Apple Silicon (M4), utilizando chamadas nativas de sistema para transcrição on-device e integração com Grok/Gemini.
 
-- Roda no terminal; o próximo passo natural é um app de menu bar (SwiftUI) com ícone de estado.
-- Wake word via transcrição contínua funciona, mas consome mais CPU que um detector dedicado (ex.: Porcupine).
-- Sem streaming: a fala começa só quando a resposta completa chega. Streaming da API + fala por sentenças reduziria a latência.
-- Não dá para interromper a resposta falada (adicionar "Pynkaro, para").
+**Limitações Atuais e Soluções Planejadas:**
+1. **Gargalo de Latência:** O sistema aguarda o payload completo da API. O roadmap inclui implementar streaming de resposta (chunking), iniciando a síntese de áudio assim que a primeira sentença completa for recebida.
+2. **Wake Word Ineficiente:** O `SFSpeechRecognizer` exige reset a cada 45s e sofre em ambientes ruidosos. O próximo passo é integrar um motor CoreML ou Porcupine apenas para a detecção de "Arix", acionando o ditado contínuo somente após o trigger.
+3. **UI Responsivo:** Transição do atual lip-sync por PNG estático para um State Machine completo no Rive, gerenciando status (idle, listening, thinking, speaking) com pulsações dinâmicas.

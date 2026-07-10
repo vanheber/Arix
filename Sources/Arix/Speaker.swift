@@ -32,26 +32,26 @@ final class Speaker: NSObject, Speaking, AVSpeechSynthesizerDelegate {
             }
             print("🗣️ Voz: \(voice.name) (\(quality))")
             if voice.quality == .default {
-                print("   Dica: baixe o Felipe (Aprimorada) em Ajustes > Acessibilidade >")
+                print("   Dica: baixe a Luciana (Aprimorada) em Ajustes > Acessibilidade >")
                 print("   Conteúdo Falado > Voz do Sistema > Gerenciar Vozes, para uma voz muito mais natural.")
             }
         }
     }
 
-    /// Escolhe a voz definida em PYNKARO_VOICE ou, senão, a voz pt-BR
-    /// masculina de maior qualidade instalada (premium > aprimorada > padrão).
-    /// Se não houver voz masculina, usa a melhor pt-BR disponível.
+    /// Escolhe a voz definida em ARIX_VOICE ou, senão, a voz pt-BR
+    /// feminina de maior qualidade instalada (premium > aprimorada > padrão).
+    /// Se não houver voz feminina, usa a melhor pt-BR disponível.
     private static func bestVoice() -> AVSpeechSynthesisVoice? {
         let all = AVSpeechSynthesisVoice.speechVoices()
-        if let name = ProcessInfo.processInfo.environment["PYNKARO_VOICE"] {
+        if let name = ProcessInfo.processInfo.environment["ARIX_VOICE"] {
             if let v = all.first(where: { $0.name.caseInsensitiveCompare(name) == .orderedSame }) {
                 return v
             }
             print("⚠️ Voz \"\(name)\" não encontrada; usando a melhor pt-BR disponível.")
         }
         let ptVoices = all.filter { $0.language == "pt-BR" }
-        let maleVoices = ptVoices.filter { $0.gender == .male }
-        let pool = maleVoices.isEmpty ? ptVoices : maleVoices
+        let femaleVoices = ptVoices.filter { $0.gender == .female }
+        let pool = femaleVoices.isEmpty ? ptVoices : femaleVoices
         return pool.max(by: { $0.quality.rawValue < $1.quality.rawValue })
             ?? AVSpeechSynthesisVoice(language: "pt-BR")
     }

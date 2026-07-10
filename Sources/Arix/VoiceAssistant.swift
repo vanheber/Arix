@@ -3,7 +3,7 @@ import AVFoundation
 import Speech
 
 /// Máquina de estados do assistente:
-/// aguardando wake word → capturando pergunta → pensando (Claude) → falando → volta ao início.
+/// aguardando wake word → capturando pergunta → pensando → falando → volta ao início.
 final class VoiceAssistant: NSObject {
 
     private enum State {
@@ -13,13 +13,13 @@ final class VoiceAssistant: NSObject {
         case speaking
     }
 
-    /// Wake word (busca case/diacritic-insensitive, então "pincaro" casa
-    /// "Píncaro", "PÍNCARO"...). Sobrescreva com PYNKARO_WAKE_WORD, sem recompilar.
+    /// Wake word (busca case/diacritic-insensitive, então "arix" casa
+    /// "Arix", "ARIX"...). Sobrescreva com ARIX_WAKE_WORD, sem recompilar.
     private let wakeWords: [String] = {
-        if let custom = ProcessInfo.processInfo.environment["PYNKARO_WAKE_WORD"], !custom.isEmpty {
+        if let custom = ProcessInfo.processInfo.environment["ARIX_WAKE_WORD"], !custom.isEmpty {
             return [custom.lowercased()]
         }
-        return ["pincaro"]
+        return ["arix"]
     }()
 
     /// Notifica a interface (menu bar) sobre mudanças de estado.
@@ -38,7 +38,7 @@ final class VoiceAssistant: NSObject {
         }
         return Speaker()
     }()
-    private let claude = ClaudeClient()
+    private let llm = LLMClient()
     private lazy var avatar = AvatarWindow()
 
     private func emitStatus() {
@@ -223,7 +223,7 @@ final class VoiceAssistant: NSObject {
         }
     }
 
-    // MARK: - Pergunta → Claude → Fala
+    // MARK: - Pergunta → LLM → Fala
 
     private func finishCapture() {
         guard state == .capturingQuestion else { return }
@@ -243,7 +243,7 @@ final class VoiceAssistant: NSObject {
 
         state = .thinking
         print("🧠 Pergunta: \(q)")
-        claude.ask(q) { [weak self] result in
+        llm.ask(q) { [weak self] result in
             DispatchQueue.main.async { self?.handleAnswer(result) }
         }
     }

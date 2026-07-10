@@ -6,8 +6,14 @@ import RiveRuntime
 /// inferior direito da tela enquanto o assistente está ativo (ouvindo,
 /// pensando ou falando). Entrada: o avatar sobe de baixo para cima; saída: fade.
 ///
+/// Design do avatar (geração dos assets):
+///   - Revestimento estrutural: Nankin Gray
+///   - Contornos metálicos: Antique Bronze
+///   - Núcleo de emissão/lip-sync (visemas): Deep Monarch Blue
+///   - Fundo estritamente transparente
+///
 /// Dois modos de renderização, escolhidos na inicialização:
-///  1. Rig Rive: se existir "avatar.riv" (raiz do projeto ou ~/.config/pynkaro/),
+///  1. Rig Rive: se existir "avatar.riv" (raiz do projeto ou ~/.config/arix/),
 ///     a boca é dirigida por um input numérico do state machine (0 a 4).
 ///  2. Sprites PNG: "avatar.png" + variações de boca (comportamento anterior).
 final class AvatarWindow {
@@ -39,7 +45,7 @@ final class AvatarWindow {
     private var riveViewModel: RiveViewModel?
     /// Nome do input numérico do state machine que recebe o nível da boca (0-4).
     private static let riveInputName =
-        ProcessInfo.processInfo.environment["PYNKARO_RIVE_INPUT"] ?? "mouth"
+        ProcessInfo.processInfo.environment["ARIX_RIVE_INPUT"] ?? "mouth"
 
     // MARK: Animação de entrada
     /// Posições da view DENTRO da janela (a janela fica fixa; quem sobe é a view).
@@ -74,7 +80,7 @@ final class AvatarWindow {
         // 2) Sprites PNG.
         guard let image = AvatarWindow.loadImage(named: "avatar") else {
             print("⚠️ Nem avatar.riv nem avatar.png encontrados (raiz do projeto ou")
-            print("   ~/.config/pynkaro/); o avatar não será exibido.")
+            print("   ~/.config/arix/); o avatar não será exibido.")
             return
         }
         sprites[0] = image
@@ -173,7 +179,7 @@ final class AvatarWindow {
         let fm = FileManager.default
         var candidates = [
             URL(fileURLWithPath: fm.currentDirectoryPath).appendingPathComponent(name),
-            fm.homeDirectoryForCurrentUser.appendingPathComponent(".config/pynkaro/\(name)")
+            fm.homeDirectoryForCurrentUser.appendingPathComponent(".config/arix/\(name)")
         ]
         // Dentro do bundle .app, os recursos são embutidos pelo make_app.sh.
         if let resources = Bundle.main.resourceURL {
@@ -192,7 +198,7 @@ final class AvatarWindow {
             let data = try Data(contentsOf: url)
             let riveFile = try RiveFile(byteArray: [UInt8](data), loadCdn: false)
             let model = RiveModel(riveFile: riveFile)
-            let stateMachine = ProcessInfo.processInfo.environment["PYNKARO_RIVE_STATE_MACHINE"]
+            let stateMachine = ProcessInfo.processInfo.environment["ARIX_RIVE_STATE_MACHINE"]
                 ?? "State Machine 1"
             return RiveViewModel(model, stateMachineName: stateMachine)
         } catch {

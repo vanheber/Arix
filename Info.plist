@@ -3,13 +3,13 @@
 <plist version="1.0">
 <dict>
     <key>CFBundleName</key>
-    <string>Pynkaro</string>
+    <string>Arix</string>
     <key>CFBundleDisplayName</key>
-    <string>Pynkaro</string>
+    <string>Arix</string>
     <key>CFBundleIdentifier</key>
-    <string>com.ralbuque.pynkaro</string>
+    <string>com.ralbuque.arix</string>
     <key>CFBundleExecutable</key>
-    <string>Pynkaro</string>
+    <string>Arix</string>
     <key>CFBundlePackageType</key>
     <string>APPL</string>
     <key>CFBundleShortVersionString</key>
@@ -21,8 +21,8 @@
     <key>LSUIElement</key>
     <true/>
     <key>NSMicrophoneUsageDescription</key>
-    <string>O Pynkaro escuta o microfone para detectar a palavra de ativação e transcrever suas perguntas — tudo localmente.</string>
+    <string>O Arix escuta o microfone para detectar a palavra de ativação e transcrever suas perguntas — tudo localmente.</string>
     <key>NSSpeechRecognitionUsageDescription</key>
-    <string>O Pynkaro usa o reconhecimento de fala do macOS para transcrever suas perguntas em português.</string>
+    <string>O Arix usa o reconhecimento de fala do macOS para transcrever suas perguntas em português.</string>
 </dict>
 </plist>

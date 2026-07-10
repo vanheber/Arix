@@ -35,8 +35,8 @@ final class ElevenLabsSpeaker: NSObject, Speaking, AVAudioPlayerDelegate {
         // Brian (nPczCjzI2devNBz1zQrb), Chris (iP95p4xoKVk53GoZ742B).
         // Lutz (9yzdeviXkFddZ4Oz8Mok)
          
-        self.voiceId = env["ELEVENLABS_VOICE_ID"] ?? "f016iUUEKqhX0trYHH6Q"
-        self.model = env["ELEVENLABS_MODEL"] ?? "eleven_multilingual_v2"
+        self.voiceId = env["ARIX_ELEVENLABS_VOICE_ID"] ?? env["ELEVENLABS_VOICE_ID"] ?? "21m00Tcm4TlvDq8ikWAM"
+        self.model = env["ARIX_ELEVENLABS_MODEL"] ?? env["ELEVENLABS_MODEL"] ?? "eleven_multilingual_v2"
         super.init()
         print("🗣️ Voz: ElevenLabs (modelo \(model), voice_id \(voiceId))")
     }

@@ -2,7 +2,7 @@
 import PackageDescription
 
 let package = Package(
-    name: "Pynkaro",
+    name: "Arix",
     platforms: [
         .macOS("13.1") // exigido pelo runtime da Rive
     ],
@@ -12,11 +12,11 @@ let package = Package(
     ],
     targets: [
         .executableTarget(
-            name: "Pynkaro",
+            name: "Arix",
             dependencies: [
                 .product(name: "RiveRuntime", package: "rive-ios")
             ],
-            path: "Sources/Pynkaro"
+            path: "Sources/Arix"
         )
     ]
 )
